@@ -593,6 +593,18 @@ class NodeDescriptor : public ::google::protobuf::Message {
   ::cockroach::roachpb::Attributes* release_attrs();
   void set_allocated_attrs(::cockroach::roachpb::Attributes* attrs);
 
+  // optional string admin_url = 4;
+  bool has_admin_url() const;
+  void clear_admin_url();
+  static const int kAdminUrlFieldNumber = 4;
+  const ::std::string& admin_url() const;
+  void set_admin_url(const ::std::string& value);
+  void set_admin_url(const char* value);
+  void set_admin_url(const char* value, size_t size);
+  ::std::string* mutable_admin_url();
+  ::std::string* release_admin_url();
+  void set_allocated_admin_url(::std::string* admin_url);
+
   // @@protoc_insertion_point(class_scope:cockroach.roachpb.NodeDescriptor)
  private:
   inline void set_has_node_id();
@@ -601,12 +613,15 @@ class NodeDescriptor : public ::google::protobuf::Message {
   inline void clear_has_address();
   inline void set_has_attrs();
   inline void clear_has_attrs();
+  inline void set_has_admin_url();
+  inline void clear_has_admin_url();
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::uint32 _has_bits_[1];
   mutable int _cached_size_;
   ::cockroach::util::UnresolvedAddr* address_;
   ::cockroach::roachpb::Attributes* attrs_;
+  ::google::protobuf::internal::ArenaStringPtr admin_url_;
   ::google::protobuf::int32 node_id_;
   friend void  protobuf_AddDesc_cockroach_2froachpb_2fmetadata_2eproto();
   friend void protobuf_AssignDesc_cockroach_2froachpb_2fmetadata_2eproto();
@@ -1254,6 +1269,59 @@ inline void NodeDescriptor::set_allocated_attrs(::cockroach::roachpb::Attributes
     clear_has_attrs();
   }
   // @@protoc_insertion_point(field_set_allocated:cockroach.roachpb.NodeDescriptor.attrs)
+}
+
+// optional string admin_url = 4;
+inline bool NodeDescriptor::has_admin_url() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void NodeDescriptor::set_has_admin_url() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void NodeDescriptor::clear_has_admin_url() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void NodeDescriptor::clear_admin_url() {
+  admin_url_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  clear_has_admin_url();
+}
+inline const ::std::string& NodeDescriptor::admin_url() const {
+  // @@protoc_insertion_point(field_get:cockroach.roachpb.NodeDescriptor.admin_url)
+  return admin_url_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void NodeDescriptor::set_admin_url(const ::std::string& value) {
+  set_has_admin_url();
+  admin_url_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:cockroach.roachpb.NodeDescriptor.admin_url)
+}
+inline void NodeDescriptor::set_admin_url(const char* value) {
+  set_has_admin_url();
+  admin_url_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:cockroach.roachpb.NodeDescriptor.admin_url)
+}
+inline void NodeDescriptor::set_admin_url(const char* value, size_t size) {
+  set_has_admin_url();
+  admin_url_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:cockroach.roachpb.NodeDescriptor.admin_url)
+}
+inline ::std::string* NodeDescriptor::mutable_admin_url() {
+  set_has_admin_url();
+  // @@protoc_insertion_point(field_mutable:cockroach.roachpb.NodeDescriptor.admin_url)
+  return admin_url_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* NodeDescriptor::release_admin_url() {
+  clear_has_admin_url();
+  return admin_url_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void NodeDescriptor::set_allocated_admin_url(::std::string* admin_url) {
+  if (admin_url != NULL) {
+    set_has_admin_url();
+  } else {
+    clear_has_admin_url();
+  }
+  admin_url_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), admin_url);
+  // @@protoc_insertion_point(field_set_allocated:cockroach.roachpb.NodeDescriptor.admin_url)
 }
 
 // -------------------------------------------------------------------

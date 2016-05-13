@@ -216,6 +216,7 @@ func NewServer(ctx *Context, stopper *stop.Stopper) (*Server, error) {
 		AllocatorOptions: storage.AllocatorOptions{
 			AllowRebalance: true,
 		},
+		AdminURL: s.ctx.AdminURL(),
 	}
 	if ctx.TestingKnobs.Store != nil {
 		nCtx.TestingKnobs = *ctx.TestingKnobs.Store.(*storage.StoreTestingKnobs)

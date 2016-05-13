@@ -192,20 +192,35 @@ func (s *statusServer) extractNodeID(ps httprouter.Params) (roachpb.NodeID, bool
 	return nodeID, nodeID == s.gossip.GetNodeID(), nil
 }
 
+func (s *statusServer) getNodeStatus(nodeID roachpb.NodeID) (*status.NodeStatus, error) {
+	key := keys.NodeStatusKey(int32(nodeID))
+	b := inconsistentBatch()
+	b.Get(key)
+	if err := s.db.Run(b); err != nil {
+		return nil, err
+	}
+
+	var nodeStatus status.NodeStatus
+	if err := b.Results[0].Rows[0].ValueProto(&nodeStatus); err != nil {
+		err = util.Errorf("could not unmarshal NodeStatus from %s: %s", key, err)
+		return nil, err
+	}
+	return &nodeStatus, nil
+}
+
 // proxyRequest performs a GET request to another node's status server.
 func (s *statusServer) proxyRequest(nodeID roachpb.NodeID, w http.ResponseWriter, r *http.Request) {
-	addr, err := s.gossip.GetNodeIDAddress(nodeID)
+	nodeStatus, err := s.getNodeStatus(nodeID)
 	if err != nil {
-		http.Error(w,
-			fmt.Sprintf("node could not be located: %s", nodeID),
-			http.StatusBadRequest)
+		log.Error(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	// Create a call to the other node. We might want to consider moving this
 	// to an RPC instead of just proxying it.
 	// Generate the redirect url and copy all the parameters to it.
-	requestURL := fmt.Sprintf("%s://%s%s?%s", s.ctx.HTTPRequestScheme(), addr, r.URL.Path, r.URL.RawQuery)
+	requestURL := fmt.Sprintf("%s%s?%s", nodeStatus.Desc.AdminURL, r.URL.Path, r.URL.RawQuery)
 	req, err := http.NewRequest("GET", requestURL, nil)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -563,23 +578,14 @@ func (s *statusServer) handleNodeStatus(w http.ResponseWriter, r *http.Request, 
 		return
 	}
 
-	key := keys.NodeStatusKey(int32(nodeID))
-	b := inconsistentBatch()
-	b.Get(key)
-	if err := s.db.Run(b); err != nil {
+	nodeStatus, err := s.getNodeStatus(nodeID)
+	if err != nil {
 		log.Error(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	var nodeStatus status.NodeStatus
-	if err := b.Results[0].Rows[0].ValueProto(&nodeStatus); err != nil {
-		err = util.Errorf("could not unmarshal NodeStatus from %s: %s", key, err)
-		log.Error(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	respondAsJSON(w, r, &nodeStatus)
+	respondAsJSON(w, r, nodeStatus)
 }
 
 func (s *statusServer) handleMetrics(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {

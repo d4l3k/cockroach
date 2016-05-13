@@ -406,6 +406,9 @@ type StoreContext struct {
 	// it up (counted from when the snapshot generation is completed).
 	AsyncSnapshotMaxAge time.Duration
 
+	// AdminURL is the address for the admin web interface.
+	AdminURL string
+
 	TestingKnobs StoreTestingKnobs
 }
 

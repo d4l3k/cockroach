@@ -82,6 +82,7 @@ message NodeDescriptor {
   optional int32 node_id = 1 [(gogoproto.nullable) = false, (gogoproto.customname) = "NodeID", (gogoproto.casttype) = "NodeID"];
   optional util.UnresolvedAddr address = 2 [(gogoproto.nullable) = false];
   optional Attributes attrs = 3 [(gogoproto.nullable) = false];
+  optional string admin_url = 4 [(gogoproto.nullable) = false, (gogoproto.customname) = "AdminURL"];
 }
 
 // StoreDescriptor holds store information including store attributes, node

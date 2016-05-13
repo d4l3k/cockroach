@@ -119,10 +119,11 @@ void protobuf_AssignDesc_cockroach_2froachpb_2fmetadata_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StoreCapacity, _internal_metadata_),
       -1);
   NodeDescriptor_descriptor_ = file->message_type(4);
-  static const int NodeDescriptor_offsets_[3] = {
+  static const int NodeDescriptor_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeDescriptor, node_id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeDescriptor, address_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeDescriptor, attrs_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeDescriptor, admin_url_),
   };
   NodeDescriptor_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
@@ -221,18 +222,19 @@ void protobuf_AddDesc_cockroach_2froachpb_2fmetadata_2eproto() {
     "\310\336\037\000\022;\n\017next_replica_id\030\005 \001(\005B\"\310\336\037\000\342\336\037\rN"
     "extReplicaID\372\336\037\tReplicaID\"[\n\rStoreCapaci"
     "ty\022\026\n\010capacity\030\001 \001(\003B\004\310\336\037\000\022\027\n\tavailable\030"
-    "\002 \001(\003B\004\310\336\037\000\022\031\n\013range_count\030\003 \001(\005B\004\310\336\037\000\"\246"
+    "\002 \001(\003B\004\310\336\037\000\022\031\n\013range_count\030\003 \001(\005B\004\310\336\037\000\"\313"
     "\001\n\016NodeDescriptor\022)\n\007node_id\030\001 \001(\005B\030\310\336\037\000"
     "\342\336\037\006NodeID\372\336\037\006NodeID\0225\n\007address\030\002 \001(\0132\036."
     "cockroach.util.UnresolvedAddrB\004\310\336\037\000\0222\n\005a"
     "ttrs\030\003 \001(\0132\035.cockroach.roachpb.Attribute"
-    "sB\004\310\336\037\000\"\344\001\n\017StoreDescriptor\022,\n\010store_id\030"
-    "\001 \001(\005B\032\310\336\037\000\342\336\037\007StoreID\372\336\037\007StoreID\0222\n\005att"
-    "rs\030\002 \001(\0132\035.cockroach.roachpb.AttributesB"
-    "\004\310\336\037\000\0225\n\004node\030\003 \001(\0132!.cockroach.roachpb."
-    "NodeDescriptorB\004\310\336\037\000\0228\n\010capacity\030\004 \001(\0132 "
-    ".cockroach.roachpb.StoreCapacityB\004\310\336\037\000B\t"
-    "Z\007roachpbX\001", 1091);
+    "sB\004\310\336\037\000\022#\n\tadmin_url\030\004 \001(\tB\020\310\336\037\000\342\336\037\010Admi"
+    "nURL\"\344\001\n\017StoreDescriptor\022,\n\010store_id\030\001 \001"
+    "(\005B\032\310\336\037\000\342\336\037\007StoreID\372\336\037\007StoreID\0222\n\005attrs\030"
+    "\002 \001(\0132\035.cockroach.roachpb.AttributesB\004\310\336"
+    "\037\000\0225\n\004node\030\003 \001(\0132!.cockroach.roachpb.Nod"
+    "eDescriptorB\004\310\336\037\000\0228\n\010capacity\030\004 \001(\0132 .co"
+    "ckroach.roachpb.StoreCapacityB\004\310\336\037\000B\tZ\007r"
+    "oachpbX\001", 1128);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "cockroach/roachpb/metadata.proto", &protobuf_RegisterTypes);
   Attributes::default_instance_ = new Attributes();
@@ -1960,6 +1962,7 @@ void StoreCapacity::clear_range_count() {
 const int NodeDescriptor::kNodeIdFieldNumber;
 const int NodeDescriptor::kAddressFieldNumber;
 const int NodeDescriptor::kAttrsFieldNumber;
+const int NodeDescriptor::kAdminUrlFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 NodeDescriptor::NodeDescriptor()
@@ -1982,10 +1985,12 @@ NodeDescriptor::NodeDescriptor(const NodeDescriptor& from)
 }
 
 void NodeDescriptor::SharedCtor() {
+  ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
   node_id_ = 0;
   address_ = NULL;
   attrs_ = NULL;
+  admin_url_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -1995,6 +2000,7 @@ NodeDescriptor::~NodeDescriptor() {
 }
 
 void NodeDescriptor::SharedDtor() {
+  admin_url_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != default_instance_) {
     delete address_;
     delete attrs_;
@@ -2027,13 +2033,16 @@ NodeDescriptor* NodeDescriptor::New(::google::protobuf::Arena* arena) const {
 }
 
 void NodeDescriptor::Clear() {
-  if (_has_bits_[0 / 32] & 7u) {
+  if (_has_bits_[0 / 32] & 15u) {
     node_id_ = 0;
     if (has_address()) {
       if (address_ != NULL) address_->::cockroach::util::UnresolvedAddr::Clear();
     }
     if (has_attrs()) {
       if (attrs_ != NULL) attrs_->::cockroach::roachpb::Attributes::Clear();
+    }
+    if (has_admin_url()) {
+      admin_url_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
     }
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -2088,6 +2097,23 @@ bool NodeDescriptor::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
+        if (input->ExpectTag(34)) goto parse_admin_url;
+        break;
+      }
+
+      // optional string admin_url = 4;
+      case 4: {
+        if (tag == 34) {
+         parse_admin_url:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_admin_url()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+            this->admin_url().data(), this->admin_url().length(),
+            ::google::protobuf::internal::WireFormat::PARSE,
+            "cockroach.roachpb.NodeDescriptor.admin_url");
+        } else {
+          goto handle_unusual;
+        }
         if (input->ExpectAtEnd()) goto success;
         break;
       }
@@ -2134,6 +2160,16 @@ void NodeDescriptor::SerializeWithCachedSizes(
       3, *this->attrs_, output);
   }
 
+  // optional string admin_url = 4;
+  if (has_admin_url()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->admin_url().data(), this->admin_url().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "cockroach.roachpb.NodeDescriptor.admin_url");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      4, this->admin_url(), output);
+  }
+
   if (_internal_metadata_.have_unknown_fields()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -2163,6 +2199,17 @@ void NodeDescriptor::SerializeWithCachedSizes(
         3, *this->attrs_, target);
   }
 
+  // optional string admin_url = 4;
+  if (has_admin_url()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->admin_url().data(), this->admin_url().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "cockroach.roachpb.NodeDescriptor.admin_url");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        4, this->admin_url(), target);
+  }
+
   if (_internal_metadata_.have_unknown_fields()) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
@@ -2174,7 +2221,7 @@ void NodeDescriptor::SerializeWithCachedSizes(
 int NodeDescriptor::ByteSize() const {
   int total_size = 0;
 
-  if (_has_bits_[0 / 32] & 7u) {
+  if (_has_bits_[0 / 32] & 15u) {
     // optional int32 node_id = 1;
     if (has_node_id()) {
       total_size += 1 +
@@ -2194,6 +2241,13 @@ int NodeDescriptor::ByteSize() const {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
           *this->attrs_);
+    }
+
+    // optional string admin_url = 4;
+    if (has_admin_url()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->admin_url());
     }
 
   }
@@ -2232,6 +2286,10 @@ void NodeDescriptor::MergeFrom(const NodeDescriptor& from) {
     if (from.has_attrs()) {
       mutable_attrs()->::cockroach::roachpb::Attributes::MergeFrom(from.attrs());
     }
+    if (from.has_admin_url()) {
+      set_has_admin_url();
+      admin_url_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.admin_url_);
+    }
   }
   if (from._internal_metadata_.have_unknown_fields()) {
     mutable_unknown_fields()->MergeFrom(from.unknown_fields());
@@ -2263,6 +2321,7 @@ void NodeDescriptor::InternalSwap(NodeDescriptor* other) {
   std::swap(node_id_, other->node_id_);
   std::swap(address_, other->address_);
   std::swap(attrs_, other->attrs_);
+  admin_url_.Swap(&other->admin_url_);
   std::swap(_has_bits_[0], other->_has_bits_[0]);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
@@ -2387,6 +2446,59 @@ void NodeDescriptor::set_allocated_attrs(::cockroach::roachpb::Attributes* attrs
     clear_has_attrs();
   }
   // @@protoc_insertion_point(field_set_allocated:cockroach.roachpb.NodeDescriptor.attrs)
+}
+
+// optional string admin_url = 4;
+bool NodeDescriptor::has_admin_url() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+void NodeDescriptor::set_has_admin_url() {
+  _has_bits_[0] |= 0x00000008u;
+}
+void NodeDescriptor::clear_has_admin_url() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+void NodeDescriptor::clear_admin_url() {
+  admin_url_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  clear_has_admin_url();
+}
+ const ::std::string& NodeDescriptor::admin_url() const {
+  // @@protoc_insertion_point(field_get:cockroach.roachpb.NodeDescriptor.admin_url)
+  return admin_url_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void NodeDescriptor::set_admin_url(const ::std::string& value) {
+  set_has_admin_url();
+  admin_url_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:cockroach.roachpb.NodeDescriptor.admin_url)
+}
+ void NodeDescriptor::set_admin_url(const char* value) {
+  set_has_admin_url();
+  admin_url_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:cockroach.roachpb.NodeDescriptor.admin_url)
+}
+ void NodeDescriptor::set_admin_url(const char* value, size_t size) {
+  set_has_admin_url();
+  admin_url_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:cockroach.roachpb.NodeDescriptor.admin_url)
+}
+ ::std::string* NodeDescriptor::mutable_admin_url() {
+  set_has_admin_url();
+  // @@protoc_insertion_point(field_mutable:cockroach.roachpb.NodeDescriptor.admin_url)
+  return admin_url_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ ::std::string* NodeDescriptor::release_admin_url() {
+  clear_has_admin_url();
+  return admin_url_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void NodeDescriptor::set_allocated_admin_url(::std::string* admin_url) {
+  if (admin_url != NULL) {
+    set_has_admin_url();
+  } else {
+    clear_has_admin_url();
+  }
+  admin_url_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), admin_url);
+  // @@protoc_insertion_point(field_set_allocated:cockroach.roachpb.NodeDescriptor.admin_url)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

@@ -263,8 +263,9 @@ func (n *Node) context(ctx context.Context) context.Context {
 
 // initDescriptor initializes the node descriptor with the server
 // address and the node attributes.
-func (n *Node) initDescriptor(addr net.Addr, attrs roachpb.Attributes) {
+func (n *Node) initDescriptor(addr net.Addr, adminURL string, attrs roachpb.Attributes) {
 	n.Descriptor.Address = util.MakeUnresolvedAddr(addr.Network(), addr.String())
+	n.Descriptor.AdminURL = adminURL
 	n.Descriptor.Attrs = attrs
 }
 
@@ -311,7 +312,7 @@ func (n *Node) initNodeID(id roachpb.NodeID) {
 // RPC service "Node" and initializing stores for each specified
 // engine. Launches periodic store gossiping in a goroutine.
 func (n *Node) start(addr net.Addr, engines []engine.Engine, attrs roachpb.Attributes) error {
-	n.initDescriptor(addr, attrs)
+	n.initDescriptor(addr, n.ctx.AdminURL, attrs)
 
 	// Initialize stores, including bootstrapping new ones.
 	if err := n.initStores(engines, n.stopper); err != nil {
