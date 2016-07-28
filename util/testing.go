@@ -17,6 +17,7 @@
 package util
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -122,18 +123,33 @@ func SucceedsSoonDepth(depth int, t Tester, fn func() error) {
 // starting at 1ns and ending at the specified duration.
 func RetryForDuration(duration time.Duration, fn func() error) error {
 	deadline := timeutil.Now().Add(duration)
-	var lastErr error
-	for wait := time.Duration(1); timeutil.Now().Before(deadline); wait *= 2 {
-		lastErr = fn()
-		if lastErr == nil {
-			return nil
+	errChan := make(chan error, 1)
+	go func() {
+		for wait := time.Duration(1); timeutil.Now().Before(deadline); wait *= 2 {
+			err := fn()
+			errChan <- err
+			if err == nil {
+				return
+			}
+			log.Infof(context.Background(), "RetryForDuration err %+v", err)
+			if wait > time.Second {
+				wait = time.Second
+			}
+			time.Sleep(wait)
 		}
-		if wait > time.Second {
-			wait = time.Second
+	}()
+	lastErr := errors.New("duration exceeded")
+	for {
+		select {
+		case <-time.After(duration):
+			return lastErr
+		case err := <-errChan:
+			if err == nil {
+				return nil
+			}
+			lastErr = err
 		}
-		time.Sleep(wait)
 	}
-	return lastErr
 }
 
 // NoZeroField returns nil if none of the fields of the struct underlying the
