@@ -973,13 +973,14 @@ struct IteratorGetter : public Getter {
 // retrieves the value for the supplied key from a rocksdb::DB.
 struct DBGetter : public Getter {
   rocksdb::DB *const rep;
-  rocksdb::ReadOptions const options;
+  rocksdb::ReadOptions options;
   std::string const key;
 
   DBGetter(rocksdb::DB *const r, rocksdb::ReadOptions opts, std::string &&k)
       : rep(r),
         options(opts),
         key(std::move(k)) {
+      options.verify_checksums = false;
   }
 
   virtual DBStatus Get(DBString* value) {
@@ -1554,6 +1555,7 @@ rocksdb::Options DBMakeOptions(DBOptions db_opts) {
   options.statistics = rocksdb::CreateDBStatistics();
   options.max_open_files = db_opts.max_open_files;
   options.compaction_pri = rocksdb::kMinOverlappingRatio;
+  options.paranoid_checks = false;
   // Periodically sync the WAL to smooth out writes. Not performing
   // such syncs can be faster but can cause performance blips when the
   // OS decides it needs to flush data.
